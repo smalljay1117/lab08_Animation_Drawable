@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
@@ -20,11 +21,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView m_logo_name;
     private TextView m_view_message;
     private Button m_btn_go;
+    private SeekBar m_skb_duration;
+    private TextView m_tv_duration;
 
     private TypedArray mNbaLogos;
     private int mNbaLogosCount;
-//    private String[] mNbaLogoNames;
-//    private int mNbaLogoNamesCount;
+    private String[] mNbaLogoNames;
+    private String mNbaLogoNamesCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,15 +37,13 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initFrameAnimation();
         initNbaLogos();
+        initSeekBar();
     }
 
     private void initNbaLogos() {
         mNbaLogos = getNbaLogos();
         mNbaLogosCount = getNbaLogos().length();
         m_view_logo.setBackground(mNbaLogos.getDrawable(0));
-//        mNbaLogoNames = getNbaLogoNames();
-//        mNbaLogoNamesCount = getNbaLogoNames().toString().length();
-
     }
 
     private TypedArray getNbaLogos() {
@@ -49,10 +51,10 @@ public class MainActivity extends AppCompatActivity {
         return logos;
     }
 
-//    private String[] getNbaLogoNames() {
-//        String[] logonames = getResources().getStringArray(R.array.nba_logo_name);
-//        return logonames;
-//    }
+    private String[] getNbaLogoNames() {
+        String[] logonames = getResources().getStringArray(R.array.nba_logo_name);
+        return logonames;
+    }
 
     private void initView() {
         m_img_duke = (ImageView)findViewById(R.id.img_duke);
@@ -63,6 +65,37 @@ public class MainActivity extends AppCompatActivity {
         m_view_message = (TextView)findViewById(R.id.view_message);
 
         m_btn_go = (Button)findViewById(R.id.btn_go);
+
+        m_skb_duration = (SeekBar)findViewById(R.id.skb_duration);
+        m_tv_duration = (TextView)findViewById(R.id.tv_duration);
+    }
+
+    private int mDuration;
+
+    private void initSeekBar() {
+        m_tv_duration.setText(String.valueOf(mDuration));
+        m_skb_duration.setMax(20);
+        m_skb_duration.setOnSeekBarChangeListener(new SeekBarClick());
+    }
+
+    private class SeekBarClick implements SeekBar.OnSeekBarChangeListener {
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            int duration = progress * 50;
+            m_tv_duration.setText(String.valueOf(duration));
+            mDuration = duration;
+        }
+
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+//            m_tv_duration.setText("start");
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+//            m_tv_duration.setText("end");
+        }
     }
 
     private void initFrameAnimation() {
@@ -97,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void go(View view) {
         m_Handler.post(mStarRandomTask);
-        m_Handler.postDelayed(mStopRandomTask, 3000);
+        m_Handler.postDelayed(mStopRandomTask, 20000);
         m_btn_go.setEnabled(false);
         m_btn_go.setText("選擇中...");
     }
@@ -110,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             int index = (int)(Math.random() * mNbaLogosCount);
             m_view_logo.setBackground(mNbaLogos.getDrawable(index));
-            m_Handler.postDelayed(this, 1);
+            m_Handler.postDelayed(this, mDuration);
         }
     }
 
