@@ -27,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
     private TypedArray mNbaLogos;
     private int mNbaLogosCount;
     private String[] mNbaLogoNames;
-    private String mNbaLogoNamesCount;
 
 
     @Override
@@ -44,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         mNbaLogos = getNbaLogos();
         mNbaLogosCount = getNbaLogos().length();
         m_view_logo.setBackground(mNbaLogos.getDrawable(0));
+
+        mNbaLogoNames = getNbaLogoNames();
     }
 
     private TypedArray getNbaLogos() {
@@ -143,6 +144,8 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             int index = (int)(Math.random() * mNbaLogosCount);
             m_view_logo.setBackground(mNbaLogos.getDrawable(index));
+            m_logo_name.setText(mNbaLogoNames[index]);
+            m_view_message.setText("post成功");
             m_Handler.postDelayed(this, mDuration);
         }
     }
